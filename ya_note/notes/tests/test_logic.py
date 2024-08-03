@@ -1,4 +1,5 @@
 from http import HTTPStatus
+
 from django.template.defaultfilters import slugify
 
 from notes.forms import WARNING

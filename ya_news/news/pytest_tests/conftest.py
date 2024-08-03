@@ -1,9 +1,8 @@
-from datetime import datetime, timedelta
-
 import pytest
+
 from django.conf import settings
 from django.test.client import Client
-from django.urls import reverse
+from django.utils import timezone
 
 from news.models import Comment, News
 
@@ -55,13 +54,13 @@ def comment(news, author):
 
 @pytest.fixture
 def news_for_main_page():
-    today = datetime.today()
+    today = timezone.now()
 
     News.objects.bulk_create(
         News(
             title=f'Заголовок {index + 1}',
             text=f'Текст {index + 1}',
-            date=today - timedelta(days=index),
+            date=today - timezone.timedelta(days=index),
         )
         for index in range(settings.NEWS_COUNT_ON_HOME_PAGE + 1)
     )
@@ -73,38 +72,3 @@ def comments_for_same_news(author, news):
         Comment.objects.create(
             news=news, author=author, text=f'Текст {index + 1}'
         )
-
-
-@pytest.fixture
-def url_users_signup():
-    return reverse('users:signup')
-
-
-@pytest.fixture
-def url_users_login():
-    return reverse('users:login')
-
-
-@pytest.fixture
-def url_users_logout():
-    return reverse('users:logout')
-
-
-@pytest.fixture
-def url_news_home():
-    return reverse('news:home')
-
-
-@pytest.fixture
-def url_news_detail(news):
-    return reverse('news:detail', args=(news.id,))
-
-
-@pytest.fixture
-def url_comment_delete(comment):
-    return reverse('news:delete', args=(comment.id,))
-
-
-@pytest.fixture
-def url_comment_edit(comment):
-    return reverse('news:edit', args=(comment.id,))
